@@ -1,3 +1,47 @@
+/- leanprover/lean4:v4.35.0-rc2  mathlib v4.35.0-rc2 -/
+/-
+# JSP-000818 — Lean formalization observation (least prime primitive roots)
+
+**Problem (TheJustinSunPrize/awards, JSP-000818).** *Does every prime modulus have
+a relatively small prime primitive root?* (Mathematical area: number theory;
+status: open.)
+
+**Scope of this file (honest, scoped observation).** The original question is
+open: it asks whether *every* prime modulus has a prime primitive root that is
+relatively small in general (e.g. bounded by some fixed power of `log p`).
+This file only formalizes a finite, fully machine-checked instance table for
+the odd primes `p ≤ 19`, recording for each such `p` its *least prime primitive
+root* modulo `p`:
+
+| `p`          | 3 | 5 | 7 | 11 | 13 | 17 | 19 |
+|--------------|---|---|---|----|----|----|----|
+| least prime primitive root | 2 | 2 | 3 | 2  | 2  | 3  | 2  |
+
+For each of the seven pairs `(p, g)` below, the formal statement verifies the
+three components:
+
+* `p` is prime;
+* `g` is a primitive root modulo `p`, phrased directly as the multiplicative
+  order condition `g ^ (p - 1) = 1` in `ZMod p` with no smaller positive power
+  equal to `1` (`PrimRootCond` below; the companion theorems
+  `jsp000818_pX_primitive_root` also repackage each instance in Mathlib's
+  `IsPrimitiveRoot` semantics);
+* `g` is the *least* such prime: every prime `q < g` fails `PrimRootCond p q`
+  (vacuous for `g = 2`, the smallest prime; for `g = 3` this checks `q = 2`,
+  whose orders modulo 7 and 17 are 3 and 8, not 6 and 16).
+
+This does **not** answer the original open question and is not a claim on any
+award. Note that `p = 2` is degenerate: the unit group of `ZMod 2` is trivial
+(its only unit is `1`, which is not prime), so it has no prime primitive root
+at all; the seven odd primes above are all remaining primes `≤ 19`.
+
+## Provenance / toolchain
+
+* Lean `v4.35.0-rc2`, Mathlib `v4.35.0-rc2` (pinned in `lean-toolchain`).
+* All numeric content is discharged by `decide`; the `IsPrimitiveRoot`
+  repackaging theorems are structural term-mode proofs. No `sorry`, `admit`,
+  `native_decide`, or unproven assumptions are used.
+-/
 import Mathlib
 
 /-!
